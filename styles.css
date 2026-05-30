@@ -259,10 +259,9 @@ button:disabled {
 
 .hint-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.55fr);
+  grid-template-columns: minmax(180px, 0.32fr) minmax(0, 1fr);
   gap: 12px;
   align-items: start;
-  margin-bottom: 12px;
 }
 
 .hint-kicker {
@@ -299,102 +298,6 @@ button:disabled {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
-}
-
-.hint-search {
-  display: grid;
-  gap: 6px;
-  margin-bottom: 12px;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.hint-search input {
-  width: 100%;
-  min-height: 44px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0 12px;
-  color: var(--ink);
-  background: white;
-  font: inherit;
-  font-size: 0.95rem;
-  font-weight: 650;
-}
-
-.hint-search input:focus {
-  outline: 3px solid rgba(15, 118, 110, 0.18);
-  border-color: rgba(15, 118, 110, 0.55);
-}
-
-.hint-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
-  max-height: min(62vh, 620px);
-  overflow: auto;
-  padding-right: 3px;
-}
-
-.hint-group {
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fbfcff;
-}
-
-.hint-group h3 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0;
-  padding: 11px 12px;
-  color: white;
-  background: var(--hint-color);
-  font-size: 0.96rem;
-  line-height: 1.12;
-  letter-spacing: 0;
-}
-
-.hint-group h3 span {
-  flex: 0 0 auto;
-  border-radius: 8px;
-  padding: 4px 7px;
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.9);
-  font-size: 0.78rem;
-  font-weight: 900;
-}
-
-.hint-list {
-  display: grid;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.hint-list li {
-  border-top: 1px solid #e6ebf2;
-  padding: 9px 11px;
-  overflow-wrap: anywhere;
-  font-size: 0.88rem;
-  line-height: 1.35;
-  font-weight: 680;
-}
-
-.hint-empty {
-  grid-column: 1 / -1;
-  margin: 0;
-  border: 1px dashed #aeb8c8;
-  border-radius: 8px;
-  padding: 18px;
-  color: var(--muted);
-  background: white;
-  font-weight: 800;
-  text-align: center;
 }
 
 .columns {
@@ -652,13 +555,6 @@ button:disabled {
 
   .hint-header {
     grid-template-columns: 1fr;
-  }
-
-  .hint-content {
-    grid-template-columns: 1fr;
-    max-height: none;
-    overflow: visible;
-    padding-right: 0;
   }
 
   .columns {

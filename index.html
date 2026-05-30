@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kuruluş ve Yükseliş Padişahları</title>
-    <link rel="stylesheet" href="styles.css?v=20260530-hints">
+    <link rel="stylesheet" href="styles.css?v=20260530-card-hints">
   </head>
   <body>
     <main class="app-shell">
@@ -36,19 +36,14 @@
         <p id="statusText" class="status-text" aria-live="polite"></p>
       </section>
 
-      <section id="hintPanel" class="hint-panel" aria-label="İpucu panosu" hidden>
+      <section id="hintPanel" class="hint-panel" aria-label="Kart ipucu" hidden>
         <div class="hint-header">
           <div>
-            <p class="hint-kicker">Kopya listesi</p>
-            <h2>İpucu Panosu</h2>
+            <p class="hint-kicker">Seçili bilgi</p>
+            <h2>Kart İpucu</h2>
           </div>
           <div id="selectedHint" class="selected-hint" aria-live="polite"></div>
         </div>
-        <label class="hint-search">
-          <span>Arama</span>
-          <input id="hintSearch" type="search" autocomplete="off" placeholder="Padişah veya bilgi ara">
-        </label>
-        <div id="hintContent" class="hint-content"></div>
       </section>
 
       <section id="columns" class="columns" aria-label="Padişah sütunları"></section>
@@ -56,6 +51,6 @@
       <section id="resultsPanel" class="results-panel" aria-live="polite" hidden></section>
     </main>
 
-    <script src="app.js?v=20260530-hints"></script>
+    <script src="app.js?v=20260530-card-hints"></script>
   </body>
 </html>

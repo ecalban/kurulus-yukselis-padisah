@@ -4,7 +4,7 @@ Bu proje, verilen RTF dosyasındaki Osmanlı kuruluş-yükseliş dönemi bilgile
 
 ## Kullanım
 
-`index.html` dosyasını tarayıcıda açın. `Yeni bilgi` düğmesiyle kart çekin, doğru padişah/dönem sütununu seçin, tüm kartlar bitince `Kontrol et` düğmesine basın. Zorlanınca `İpucu` panelinden seçili kartın cevabına veya padişah/dönemlere göre gruplanmış kopya listesine bakabilirsiniz.
+`index.html` dosyasını tarayıcıda açın. `Yeni bilgi` düğmesiyle kart çekin, doğru padişah/dönem sütununu seçin, tüm kartlar bitince `Kontrol et` düğmesine basın. Zorlanınca `İpucu` düğmesiyle yalnızca seçili karta ait kısa yönlendirmeyi görebilirsiniz.
 
 ## GitHub Pages
 

@@ -190,6 +190,20 @@ const SULTANS = SULTAN_ORDER.map((name, index) => ({
 
 const sultanIdBySourceName = new Map(SULTANS.map((sultan) => [sultan.sourceName, sultan.id]));
 
+const PERIOD_HINTS = {
+  "osman-bey": "Kuruluşun en erken adımlarını, uç beyliğinden devlete geçişi ve ilk uygulamaları düşün.",
+  "orhan-bey": "Bursa-İznik-Gelibolu hattını, ilk düzenli kurumları ve Rumeli’ye geçiş sürecini hatırla.",
+  murat: "Edirne merkezli Balkan ilerleyişini, ilk büyük Haçlı mücadelelerini ve kapıkulu düzenini düşün.",
+  "yildirim-bayezit": "Anadolu Türk siyasi birliği, İstanbul kuşatmaları, Ankara Savaşı ve Fetret’e giden sürece bak.",
+  "mehmet-celebi": "Fetret sonrası toparlanma dönemini ve merkezi otoriteyi yeniden kurma çabasını hatırla.",
+  "ii-murat": "Varna, II. Kosova, Buçuktepe ve Balkanlarda kalıcı üstünlük sağlayan dönemi düşün.",
+  "fatih-sultan-mehmet": "İstanbul’un fethi, Karadeniz ve Balkan genişlemesi, kanunlaşma ve merkeziyetçilik izlerini ara.",
+  "ii-bayezit": "Cem Sultan, Şahkulu ve yükseliş içindeki durgunluk havasını çağrıştıran dönemi düşün.",
+  "yavuz-sultan-selim": "Doğu siyaseti, Safevi-Memlük mücadelesi, halifelik ve Mısır hattını hatırla.",
+  "kanuni-sultan-suleyman": "Orta Avrupa, Akdeniz, kapitülasyonlar ve en uzun saltanat dönemine ait izleri yakala.",
+  "sokullu-mehmet-pasa": "Sadrazam merkezli projeleri, kanal fikirlerini, Kıbrıs ve İnebahtı sonrasını düşün.",
+};
+
 const FACTS = RAW_FACTS.trim().split("\n").map((line, index) => {
   const separatorIndex = line.indexOf(": ");
   const sourceName = line.slice(0, separatorIndex);
@@ -218,8 +232,6 @@ const els = {
   finishButton: document.querySelector("#finishButton"),
   hintToggleButton: document.querySelector("#hintToggleButton"),
   hintPanel: document.querySelector("#hintPanel"),
-  hintSearch: document.querySelector("#hintSearch"),
-  hintContent: document.querySelector("#hintContent"),
   selectedHint: document.querySelector("#selectedHint"),
   resetButton: document.querySelector("#resetButton"),
   placedCount: document.querySelector("#placedCount"),
@@ -417,72 +429,15 @@ function updateColumnCounts() {
   });
 }
 
-function normalizeSearch(text) {
-  return text
-    .toLocaleLowerCase("tr-TR")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ı/g, "i");
-}
-
 function renderSelectedHint() {
   const selectedId = state.selectedId ?? state.currentId;
   if (selectedId === null) {
-    els.selectedHint.innerHTML = "<span>Seçili kart</span> Kart seçilince cevabı burada görünür.";
+    els.selectedHint.innerHTML = "<span>İpucu</span> Önce bir kart çek veya yerleştirdiğin kartlardan birini seç.";
     return;
   }
 
   const fact = factById.get(selectedId);
-  const sultan = sultanById.get(fact.sultan);
-  els.selectedHint.innerHTML = `<span>Seçili kartın cevabı</span> ${sultan.name}`;
-}
-
-function createHintGroup(sultan, facts) {
-  const group = document.createElement("article");
-  group.className = "hint-group";
-  group.style.setProperty("--hint-color", sultan.color);
-
-  const title = document.createElement("h3");
-  title.innerHTML = `${sultan.name}<span>${facts.length}</span>`;
-
-  const list = document.createElement("ol");
-  list.className = "hint-list";
-  facts.forEach((fact) => {
-    const item = document.createElement("li");
-    item.textContent = fact.text;
-    list.append(item);
-  });
-
-  group.append(title, list);
-  return group;
-}
-
-function renderHints() {
-  const query = normalizeSearch(els.hintSearch.value.trim());
-  els.hintContent.innerHTML = "";
-
-  let visibleGroupCount = 0;
-  SULTANS.forEach((sultan) => {
-    const sultanMatches = normalizeSearch(sultan.name).includes(query) || normalizeSearch(sultan.sourceName).includes(query);
-    const facts = FACTS.filter((fact) => {
-      if (fact.sultan !== sultan.id) {
-        return false;
-      }
-      return sultanMatches || normalizeSearch(fact.text).includes(query);
-    });
-
-    if (facts.length > 0) {
-      visibleGroupCount += 1;
-      els.hintContent.append(createHintGroup(sultan, facts));
-    }
-  });
-
-  if (visibleGroupCount === 0) {
-    const empty = document.createElement("p");
-    empty.className = "hint-empty";
-    empty.textContent = "Eşleşen ipucu yok.";
-    els.hintContent.append(empty);
-  }
+  els.selectedHint.innerHTML = `<span>İpucu</span> ${PERIOD_HINTS[fact.sultan]}`;
 }
 
 function toggleHintPanel() {
@@ -493,7 +448,6 @@ function toggleHintPanel() {
 
   if (willOpen) {
     renderSelectedHint();
-    renderHints();
     els.hintPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 }
@@ -509,6 +463,7 @@ function updateUi() {
   els.finishButton.disabled = !allPlaced || state.checked;
 
   const hasAssignableCard = (state.selectedId !== null || state.currentId !== null) && !state.checked;
+  els.hintToggleButton.disabled = !hasAssignableCard;
   els.choiceBar.querySelectorAll(".choice-button").forEach((button) => {
     button.disabled = !hasAssignableCard;
   });
@@ -626,7 +581,6 @@ function handleKeyboardAssign(event) {
 els.drawButton.addEventListener("click", drawFact);
 els.finishButton.addEventListener("click", finishRound);
 els.hintToggleButton.addEventListener("click", toggleHintPanel);
-els.hintSearch.addEventListener("input", renderHints);
 els.resetButton.addEventListener("click", resetRound);
 document.addEventListener("keydown", handleKeyboardAssign);
 
