@@ -216,6 +216,11 @@ const els = {
   currentCardSlot: document.querySelector("#currentCardSlot"),
   drawButton: document.querySelector("#drawButton"),
   finishButton: document.querySelector("#finishButton"),
+  hintToggleButton: document.querySelector("#hintToggleButton"),
+  hintPanel: document.querySelector("#hintPanel"),
+  hintSearch: document.querySelector("#hintSearch"),
+  hintContent: document.querySelector("#hintContent"),
+  selectedHint: document.querySelector("#selectedHint"),
   resetButton: document.querySelector("#resetButton"),
   placedCount: document.querySelector("#placedCount"),
   totalCount: document.querySelector("#totalCount"),
@@ -412,6 +417,87 @@ function updateColumnCounts() {
   });
 }
 
+function normalizeSearch(text) {
+  return text
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i");
+}
+
+function renderSelectedHint() {
+  const selectedId = state.selectedId ?? state.currentId;
+  if (selectedId === null) {
+    els.selectedHint.innerHTML = "<span>Seçili kart</span> Kart seçilince cevabı burada görünür.";
+    return;
+  }
+
+  const fact = factById.get(selectedId);
+  const sultan = sultanById.get(fact.sultan);
+  els.selectedHint.innerHTML = `<span>Seçili kartın cevabı</span> ${sultan.name}`;
+}
+
+function createHintGroup(sultan, facts) {
+  const group = document.createElement("article");
+  group.className = "hint-group";
+  group.style.setProperty("--hint-color", sultan.color);
+
+  const title = document.createElement("h3");
+  title.innerHTML = `${sultan.name}<span>${facts.length}</span>`;
+
+  const list = document.createElement("ol");
+  list.className = "hint-list";
+  facts.forEach((fact) => {
+    const item = document.createElement("li");
+    item.textContent = fact.text;
+    list.append(item);
+  });
+
+  group.append(title, list);
+  return group;
+}
+
+function renderHints() {
+  const query = normalizeSearch(els.hintSearch.value.trim());
+  els.hintContent.innerHTML = "";
+
+  let visibleGroupCount = 0;
+  SULTANS.forEach((sultan) => {
+    const sultanMatches = normalizeSearch(sultan.name).includes(query) || normalizeSearch(sultan.sourceName).includes(query);
+    const facts = FACTS.filter((fact) => {
+      if (fact.sultan !== sultan.id) {
+        return false;
+      }
+      return sultanMatches || normalizeSearch(fact.text).includes(query);
+    });
+
+    if (facts.length > 0) {
+      visibleGroupCount += 1;
+      els.hintContent.append(createHintGroup(sultan, facts));
+    }
+  });
+
+  if (visibleGroupCount === 0) {
+    const empty = document.createElement("p");
+    empty.className = "hint-empty";
+    empty.textContent = "Eşleşen ipucu yok.";
+    els.hintContent.append(empty);
+  }
+}
+
+function toggleHintPanel() {
+  const willOpen = els.hintPanel.hidden;
+  els.hintPanel.hidden = !willOpen;
+  els.hintToggleButton.classList.toggle("is-active", willOpen);
+  els.hintToggleButton.setAttribute("aria-expanded", String(willOpen));
+
+  if (willOpen) {
+    renderSelectedHint();
+    renderHints();
+    els.hintPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
 function updateUi() {
   const placedCount = state.placed.size;
   const totalCount = FACTS.length;
@@ -440,6 +526,9 @@ function updateUi() {
   }
 
   updateColumnCounts();
+  if (!els.hintPanel.hidden) {
+    renderSelectedHint();
+  }
 }
 
 function removeResultNote(card) {
@@ -520,6 +609,10 @@ function resetRound() {
 }
 
 function handleKeyboardAssign(event) {
+  if (event.target.matches("input, textarea, select")) {
+    return;
+  }
+
   const key = event.key.toLocaleUpperCase("tr-TR");
   const sultan = SULTANS.find((item) => item.key === key);
   if (!sultan) {
@@ -532,6 +625,8 @@ function handleKeyboardAssign(event) {
 
 els.drawButton.addEventListener("click", drawFact);
 els.finishButton.addEventListener("click", finishRound);
+els.hintToggleButton.addEventListener("click", toggleHintPanel);
+els.hintSearch.addEventListener("input", renderHints);
 els.resetButton.addEventListener("click", resetRound);
 document.addEventListener("keydown", handleKeyboardAssign);
 
