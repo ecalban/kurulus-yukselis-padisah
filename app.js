@@ -395,13 +395,12 @@ function moveCard(card, zone) {
   const previousZone = card.closest(".drop-zone");
   const wasCurrentCard = state.currentId === id;
 
-  removeResultNote(card);
-  card.classList.remove("correct", "wrong");
   card.classList.remove("is-selected");
   card.setAttribute("aria-pressed", "false");
   zone.append(card);
   state.placed.set(id, zone.dataset.sultan);
   state.selectedId = null;
+  checkPlacedCard(card, zone.dataset.sultan);
 
   if (wasCurrentCard) {
     state.currentId = null;
@@ -490,6 +489,22 @@ function removeResultNote(card) {
   card.querySelector(".result-note")?.remove();
 }
 
+function checkPlacedCard(card, chosenSultan) {
+  const fact = factById.get(Number(card.dataset.id));
+  const isCorrect = chosenSultan === fact.sultan;
+
+  card.classList.remove("correct", "wrong");
+  card.classList.add(isCorrect ? "correct" : "wrong");
+  removeResultNote(card);
+
+  const note = document.createElement("div");
+  note.className = "result-note";
+  note.textContent = isCorrect ? "Doğru" : `Cevap: ${sultanById.get(fact.sultan).name}`;
+  card.append(note);
+
+  return isCorrect;
+}
+
 function finishRound() {
   if (state.placed.size !== FACTS.length || state.currentId !== null) {
     updateUi();
@@ -505,18 +520,11 @@ function finishRound() {
     const chosenSultan = card.closest(".drop-zone").dataset.sultan;
     const expectedSultan = fact.sultan;
     const stat = perSultan.get(expectedSultan);
-    const isCorrect = chosenSultan === expectedSultan;
+    const isCorrect = checkPlacedCard(card, chosenSultan);
 
     stat.total += 1;
     card.classList.remove("is-selected");
     card.setAttribute("aria-pressed", "false");
-    card.classList.add(isCorrect ? "correct" : "wrong");
-    removeResultNote(card);
-
-    const note = document.createElement("div");
-    note.className = "result-note";
-    note.textContent = isCorrect ? "Doğru" : `Cevap: ${sultanById.get(expectedSultan).name}`;
-    card.append(note);
 
     if (isCorrect) {
       correctCount += 1;
