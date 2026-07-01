@@ -264,7 +264,6 @@ function createColumn(sultan) {
       <span class="key-badge">${sultan.key}</span>
       <h2>${sultan.name}</h2>
     </div>
-    <span class="column-count" data-count-for="${sultan.id}">0</span>
   `;
 
   const zone = document.createElement("div");
@@ -417,17 +416,6 @@ function moveCard(card, zone) {
   }
 }
 
-function updateColumnCounts() {
-  SULTANS.forEach((sultan) => {
-    const zone = document.querySelector(`.drop-zone[data-sultan="${sultan.id}"]`);
-    const count = zone ? zone.querySelectorAll(".fact-card").length : 0;
-    const badge = document.querySelector(`[data-count-for="${sultan.id}"]`);
-    if (badge) {
-      badge.textContent = String(count);
-    }
-  });
-}
-
 function renderSelectedHint() {
   const selectedId = state.selectedId ?? state.currentId;
   if (selectedId === null) {
@@ -479,7 +467,6 @@ function updateUi() {
     els.statusText.textContent = `${state.remaining.length} bilgi kaldı.`;
   }
 
-  updateColumnCounts();
   if (!els.hintPanel.hidden) {
     renderSelectedHint();
   }

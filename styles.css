@@ -337,17 +337,6 @@ button:disabled {
   letter-spacing: 0;
 }
 
-.column-count {
-  flex: 0 0 auto;
-  min-width: 34px;
-  border-radius: 8px;
-  padding: 5px 8px;
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.92);
-  font-weight: 900;
-  text-align: center;
-}
-
 .sultan-heading {
   display: flex;
   align-items: center;
